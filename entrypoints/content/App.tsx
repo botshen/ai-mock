@@ -2,18 +2,23 @@ import { useState, useRef, useEffect } from 'react';
 
 export default () => {
   const [isDragging, setIsDragging] = useState(false);
-  const [position, setPosition] = useState({ y: 50 });
   const dragRef = useRef<HTMLDivElement>(null);
+  const mouseOffset = useRef<number>(0);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      if (!isDragging) return;
+      if (!isDragging || !dragRef.current) return;
 
-      const windowHeight = window.innerHeight;
-      const percentage = (e.clientY / windowHeight) * 100;
-      // 限制拖动范围在5%到95%之间
-      const clampedPercentage = Math.min(Math.max(percentage, 5), 95);
-      setPosition({ y: clampedPercentage });
+      // 直接使用鼠标位置减去偏移量
+      const newY = e.clientY - mouseOffset.current;
+
+      // 限制范围
+      const maxY = window.innerHeight - dragRef.current.offsetHeight / 2;
+      const minY = dragRef.current.offsetHeight / 2;
+      const clampedY = Math.min(Math.max(newY, minY), maxY);
+
+      // 直接设置位置，不使用 transform
+      dragRef.current.style.top = `${clampedY}px`;
     };
 
     const handleMouseUp = () => {
@@ -21,31 +26,38 @@ export default () => {
     };
 
     if (isDragging) {
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
+      window.addEventListener('mousemove', handleMouseMove, { passive: true });
+      window.addEventListener('mouseup', handleMouseUp, { passive: true });
     }
 
     return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
     };
   }, [isDragging]);
-
-  const handleOpenSidePanel = () => {
-    browser.runtime.sendMessage({ action: 'open_side_panel' });
-  }
 
   return (
     <div
       ref={dragRef}
-      onMouseDown={() => setIsDragging(true)}
-      onClick={handleOpenSidePanel}
+      onMouseDown={(e) => {
+        if (!dragRef.current) return;
+
+        // 计算鼠标在元素内的相对位置
+        const rect = dragRef.current.getBoundingClientRect();
+        mouseOffset.current = e.clientY - rect.top;
+        setIsDragging(true);
+      }}
       style={{
-        top: `${position.y}%`,
-        userSelect: 'none', // 防止拖动时选中文字
+        position: 'fixed',
+        right: 0,
+        top: '50%',
+        userSelect: 'none',
+      }}
+      onClick={() => {
+        console.log('click');
+        browser.runtime.sendMessage({ action: 'open_side_panel' });
       }}
       className={`
-        fixed right-0 -translate-y-1/2 
         w-[40px] h-[40px] 
         flex items-center justify-center
         bg-gradient-to-r from-purple-500/80 to-pink-500/80
@@ -57,12 +69,11 @@ export default () => {
         shadow-[-2px_0_10px_rgba(0,0,0,0.1)]
         group
         rounded-l-full   
+        z-9999
         ${isDragging ? 'from-purple-600 to-pink-600' : ''}
       `}
     >
-      <span className="opacity-70 group-hover:opacity-100">
-        m
-      </span>
+      <span>m</span>
     </div>
   );
 };
