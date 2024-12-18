@@ -54,16 +54,16 @@ export default () => {
         userSelect: 'none',
       }}
       onClick={() => {
-        console.log('click');
         browser.runtime.sendMessage({ action: 'open_side_panel' });
       }}
       className={`
         w-[40px] h-[40px] 
-        flex items-center justify-center
+        flex items-center justify-start
         bg-gradient-to-r from-purple-500/80 to-pink-500/80
         text-white font-bold text-lg
         hover:w-[50px] hover:from-purple-500 hover:to-pink-500 cursor-pointer
-        hover:-translate-x-1 hover:scale-105
+        transform-gpu
+        origin-right
         transition-all duration-300 ease-out
         border-l-2 border-white/20 backdrop-blur-sm
         shadow-[-2px_0_10px_rgba(0,0,0,0.1)]
@@ -73,7 +73,7 @@ export default () => {
         ${isDragging ? 'from-purple-600 to-pink-600' : ''}
       `}
     >
-      <span>m</span>
+      <span className="ml-3">m</span>
     </div>
   );
 };
