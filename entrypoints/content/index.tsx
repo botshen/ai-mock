@@ -1,5 +1,6 @@
 import ReactDOM from 'react-dom/client';
 import App from './App.tsx';
+import '../../assets/global.css';
 
 export default defineContentScript({
   matches: ['*://*/*'],
@@ -12,7 +13,11 @@ export default defineContentScript({
       anchor: 'body',
       append: 'first',
       onMount: (container) => {
-        const root = ReactDOM.createRoot(container);
+        const appContainer = document.createElement('div');
+        appContainer.id = 'mock-app-container';
+        container.appendChild(appContainer);
+
+        const root = ReactDOM.createRoot(appContainer);
         root.render(<App />);
         return root;
       },
