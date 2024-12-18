@@ -73,7 +73,7 @@ export default () => {
         ${isDragging ? 'from-purple-600 to-pink-600' : ''}
       `}
     >
-      <span className="ml-3">m</span>
+      <span className="ml-[10px]">m</span>
     </div>
   );
 };
