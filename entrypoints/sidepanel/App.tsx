@@ -1,27 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useMessageListener } from "@/entrypoints/sidepanel/hooks/use-message-listener";
+import { useLogStore } from "@/entrypoints/sidepanel/store/use-log-store";
 
-export default () => {
-  const [count, setCount] = useState(1);
-  const increment = () => setCount((count) => count + 1);
-
-  useEffect(() => {
-    const messageListener = (message: string) => {
-      if (message === 'closeSidePanel') {
-        window.close();
-      }
-    };
-
-    browser.runtime.onMessage.addListener(messageListener);
-    browser.runtime.connect({ name: 'mySidepanel' });
-    return () => {
-      browser.runtime.onMessage.removeListener(messageListener);
-    };
-  }, []);
-
+export const App = () => {
+  const { count, inc } = useLogStore();
+  useMessageListener();
   return (
     <div>
-      <p>This is React. {count}</p>
-      <button onClick={increment}>Increment</button>
+      <span>{count}</span>
+      <button onClick={inc}>one up</button>
     </div>
   );
 };

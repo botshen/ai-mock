@@ -15,9 +15,11 @@
     "postinstall": "wxt prepare"
   },
   "dependencies": {
+    "ajax-hook": "^3.0.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "tailwind-merge": "^2.5.5"
+    "tailwind-merge": "^2.5.5",
+    "zustand": "^5.0.2"
   },
   "devDependencies": {
     "@types/chrome": "^0.0.280",

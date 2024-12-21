@@ -1,14 +1,4 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-scraipe-ui * {
-  margin: 0; padding: 0;
-  box-sizing: border-box;
-}
-scraipe-ui *:before {
-  box-sizing: border-box;
-}
-scraipe-ui *:after {
-  box-sizing: border-box;
-}
+ 
